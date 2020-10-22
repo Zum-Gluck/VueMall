@@ -5,7 +5,7 @@
         class="control-current"
         :class="{ current: cuerys === index }"
         @click="controlClick(index)"
-      >
+      > 
         {{ item }}
       </div>
     </div>

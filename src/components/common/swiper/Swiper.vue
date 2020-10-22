@@ -16,7 +16,7 @@
           class="indi-item"
           :class="{ active: index === currentIndex - 1 }"
           :key="index"
-        ></div>
+        ></div> 
       </slot>
     </div>
   </div>
