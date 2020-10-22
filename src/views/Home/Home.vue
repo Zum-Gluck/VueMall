@@ -1,13 +1,12 @@
 <template>
   <div id="home">
-    <NavBar class="Home-center"><div slot="center">购物街</div></NavBar>
+    <NavBar class="Home-center">
+      <div slot="center">购物街</div>
+    </NavBar>
     <HomeSwiper :banners="banners"></HomeSwiper>
     <HomeRecommend :recommends="recommends"></HomeRecommend>
     <FeatureView></FeatureView>
-    <TabControl
-      class="tab-control"
-      :titles="['新款', '流行', '促销']"
-    ></TabControl>
+    <TabControl class="tab-control" :titles="['新款', '流行', '促销']"></TabControl>
     <ul>
       <li>text</li>
       <li>text</li>
@@ -70,7 +69,7 @@ export default {
     HomeSwiper,
     HomeRecommend,
     FeatureView,
-    TabControl,
+    TabControl
   },
   data() {
     return {
@@ -81,12 +80,12 @@ export default {
         //定义商品列表
         pop: { page: 0, list: [] },
         new: { page: 0, list: [] },
-        sell: { page: 0, list: [] },
-      },
+        sell: { page: 0, list: [] }
+      }
     };
   },
   created() {
-    getHomeMultidata().then((res) => {
+    getHomeMultidata().then(res => {
       this.banners = res.data.banner.list;
       this.recommends = res.data.recommend.list;
     });
@@ -109,8 +108,8 @@ export default {
         //打印数据 正常
         console.log(this.goods);
       });
-    },
-  },
+    }
+  }
 };
 </script>
 
