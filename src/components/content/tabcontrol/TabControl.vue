@@ -5,7 +5,7 @@
         class="control-current"
         :class="{ current: cuerys === index }"
         @click="controlClick(index)"
-      > 
+      >
         {{ item }}
       </div>
     </div>
@@ -30,7 +30,8 @@ export default {
   },
   methods: {
     controlClick(index) {
-      this.cuerys = index;
+      this.cuerys = index
+      this.$emit("contolEmitClick", index)
     },
   },
 };
