@@ -4,7 +4,12 @@
       <div slot="center">购物街</div>
     </NavBar>
     <div class="wrapper">
-      <Scroll class="content" @pullingLoad="pullingLoad" ref="Scroll">
+      <Scroll
+        class="content"
+        @pullingLoad="pullingLoad"
+        ref="Scroll"
+        @backtopBlock="backtopBlock"
+      >
         <HomeSwiper :banners="banners"></HomeSwiper>
         <HomeRecommend :recommends="recommends"></HomeRecommend>
         <FeatureView></FeatureView>
@@ -15,6 +20,7 @@
         ></TabControl>
         <MainGoods :goodsList="goods[currentGoods].list" />
       </Scroll>
+      <BackTop @click.native="BackTopClick" v-show="scrollPosition < -500" />
     </div>
   </div>
 </template>
@@ -28,6 +34,7 @@ import FeatureView from "./childComponents/FeatureView";
 import TabControl from "components/content/tabcontrol/TabControl";
 import MainGoods from "components/content/goods/MainGoods";
 import Scroll from "components/common/scroll/Scroll";
+import BackTop from "components/content/backtop/BackTop";
 
 import { getHomeMultidata, getGoodsMultidata } from "network/home";
 
@@ -41,6 +48,7 @@ export default {
     TabControl,
     MainGoods,
     Scroll,
+    BackTop,
   },
   data() {
     return {
@@ -55,6 +63,7 @@ export default {
       },
       currentGoods: "pop",
       bs: null,
+      scrollPosition: 0,
     };
   },
   created() {
@@ -85,8 +94,8 @@ export default {
         this.goods[type].list.push(...res.data.list);
         this.goods[type].page += 1;
         setTimeout(() => {
-           this.$refs.Scroll.bs.refresh()
-           this.$refs.Scroll.bs.finishPullUp()
+          this.$refs.Scroll.bs.refresh();
+          this.$refs.Scroll.bs.finishPullUp();
         }, 1000);
         // this.$refs.Scroll.bs.finishPullUp();
         //打印数据 正常
@@ -107,6 +116,12 @@ export default {
           break;
       }
       console.log(this.currentGoods);
+    },
+    BackTopClick() {
+      this.$refs.Scroll.ScrollTo(0, 0);
+    },
+    backtopBlock(params) {
+      this.scrollPosition = params;
     },
   },
 };
