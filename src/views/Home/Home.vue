@@ -26,6 +26,8 @@ import MainGoods from "components/content/goods/MainGoods";
 
 import { getHomeMultidata, getGoodsMultidata } from "network/home";
 
+
+
 export default {
   name: "Home",
   components: {
@@ -55,6 +57,9 @@ export default {
     this.getGoodsMultidata("pop");
     this.getGoodsMultidata("new");
     this.getGoodsMultidata("sell");
+  },
+  mounted() {
+  
   },
   methods: {
     /*
