@@ -1,5 +1,5 @@
 <template>
-  <div class="goods" >
+  <div class="goods">
     <GoodsItem v-for="(item,index) in goodsList" :key="index" :goodsItem="item" />
   </div>
 </template>

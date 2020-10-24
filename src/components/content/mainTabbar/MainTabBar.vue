@@ -15,7 +15,7 @@
       <img src="~assets/img/shopcar_active.png" slot="itemImg_active" />
       <div slot="itemFont">购物车</div>
     </TabBarItem>
-    <TabBarItem path="/profile" activeColor="blue"> 
+    <TabBarItem path="/profile" activeColor="blue">
       <img src="~assets/img/profile.png" slot="itemImg" />
       <img src="~assets/img/profile_active.png" slot="itemImg_active" />
       <div slot="itemFont">我的</div>
@@ -30,8 +30,8 @@ export default {
   name: "MainTabBar",
   components: {
     TabBar,
-    TabBarItem,
-  },
+    TabBarItem
+  }
 };
 </script>
 

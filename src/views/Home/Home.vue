@@ -3,15 +3,19 @@
     <NavBar class="Home-center">
       <div slot="center">购物街</div>
     </NavBar>
-    <HomeSwiper :banners="banners"></HomeSwiper>
-    <HomeRecommend :recommends="recommends"></HomeRecommend>
-    <FeatureView></FeatureView>
-    <TabControl
-      class="tab-control"
-      :titles="['新款', '流行', '促销']"
-      @contolEmitClick="contolEmitClick"
-    ></TabControl>
-    <MainGoods :goodsList="goods[currentControl].list" />
+    <div class="wrapper" ref="boxs">
+      <div class="content">
+        <HomeSwiper :banners="banners"></HomeSwiper>
+        <HomeRecommend :recommends="recommends"></HomeRecommend>
+        <FeatureView></FeatureView>
+        <TabControl
+          class="tab-control"
+          :titles="['新款', '流行', '促销']"
+          @currentControlClick="currentControlClick"
+        ></TabControl>
+        <MainGoods :goodsList="goods[currentGoods].list" />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -26,7 +30,10 @@ import MainGoods from "components/content/goods/MainGoods";
 
 import { getHomeMultidata, getGoodsMultidata } from "network/home";
 
-
+//Bscroll 安装
+import BScroll from "@better-scroll/core";
+import Pullup from "@better-scroll/pull-up";
+BScroll.use(Pullup);
 
 export default {
   name: "Home",
@@ -36,7 +43,7 @@ export default {
     HomeRecommend,
     FeatureView,
     TabControl,
-    MainGoods,
+    MainGoods
   },
   data() {
     return {
@@ -47,50 +54,52 @@ export default {
         //定义商品列表
         pop: { page: 0, list: [] },
         new: { page: 0, list: [] },
-        sell: { page: 0, list: [] },
+        sell: { page: 0, list: [] }
       },
-      currentControl: "pop",
+      currentGoods: "pop",
+      bs: null
     };
   },
   created() {
-    this.getHomeMultidata();
+    getHomeMultidata().then(res => {
+      this.banners = res.data.banner.list;
+      this.recommends = res.data.recommend.list;
+    });
+
     this.getGoodsMultidata("pop");
     this.getGoodsMultidata("new");
     this.getGoodsMultidata("sell");
   },
   mounted() {
-  
+    /*
+     * 滚动相关的代码
+     */
+    setTimeout(() => {
+      this.bs = new BScroll(this.$refs.boxs, {
+        probeType: 3,
+        pullUpLoad: true,
+        click: true
+      });
+      this.bs.on("pullingUp", () => {
+        this.getGoodsMultidata(this.currentGoods); 
+        console.log("--");
+        // 回调钩子 告诉框架已经准备好了下一次回调上拉加载更多
+        // 普通function中this指向 BScroll 的实例   箭头函数的this 指向Vue实例
+        this.bs.refresh();
+
+        setTimeout(() => {
+          this.bs.finishPullUp();
+        }, 1000);
+      });
+    }, 200);
   },
   methods: {
-    /*
-     * 操作页面的方法
-     */
-    contolEmitClick(index) {
-      console.log(index);
-      switch (index) {
-        case 0:
-          this.currentControl = "pop";
-          break;
-        case 1:
-          this.currentControl = "new";
-          break;
-        case 2:
-          this.currentControl = "sell";
-          break;
-      }
-    },
-    /*
-     * 请求数据有关的方法
-     */
-    getHomeMultidata() {
-      getHomeMultidata().then((res) => {
-        this.banners = res.data.banner.list;
-        this.recommends = res.data.recommend.list;
-      });
-    },
     getGoodsMultidata(type) {
+      /*
+       * 网络请求相关代码
+       */
       let page = this.goods[type].page + 1;
-      getGoodsMultidata(type, page).then((res) => {
+      getGoodsMultidata(type, page).then(res => {
         // page不正常
         // console.log(page);
 
@@ -102,7 +111,22 @@ export default {
         // console.log(this.goods);
       });
     },
-  },
+    currentControlClick(index) {
+      console.log(index);
+      switch (index) {
+        case 0:
+          this.currentGoods = "pop";
+          break;
+        case 1:
+          this.currentGoods = "new";
+          break;
+        case 2:
+          this.currentGoods = "sell";
+          break;
+      }
+      console.log(this.currentGoods);
+    }
+  }
 };
 </script>
 
@@ -117,5 +141,8 @@ export default {
   top: 44px;
   background: #fff;
   z-index: 1;
+}
+.wrapper {
+  height: 570px;
 }
 </style>
