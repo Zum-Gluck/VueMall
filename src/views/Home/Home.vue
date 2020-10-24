@@ -3,20 +3,24 @@
     <NavBar class="Home-center">
       <div slot="center">购物街</div>
     </NavBar>
+    <TabControl
+      class="tab-control"
+      :titles="['新款', '流行', '促销']"
+      @currentControlClick="currentControlClick"
+      ref="tabcontrol"
+      v-show=" isShowTabControl"
+    ></TabControl>
     <div class="wrapper">
-      <Scroll
-        class="content"
-        @pullingLoad="pullingLoad"
-        ref="Scroll"
-        @backtopBlock="backtopBlock"
-      >
-        <HomeSwiper :banners="banners"></HomeSwiper>
+      <Scroll class="content" @pullingLoad="pullingLoad" ref="Scroll" @backtopBlock="backtopBlock">
+        <HomeSwiper :banners="banners" @imgLoaded="imgLoaded"></HomeSwiper>
         <HomeRecommend :recommends="recommends"></HomeRecommend>
         <FeatureView></FeatureView>
         <TabControl
           class="tab-control"
           :titles="['新款', '流行', '促销']"
           @currentControlClick="currentControlClick"
+          ref="tabcontrol"
+          v-show="!isShowTabControl"
         ></TabControl>
         <MainGoods :goodsList="goods[currentGoods].list" />
       </Scroll>
@@ -48,7 +52,7 @@ export default {
     TabControl,
     MainGoods,
     Scroll,
-    BackTop,
+    BackTop
   },
   data() {
     return {
@@ -59,15 +63,17 @@ export default {
         //定义商品列表
         pop: { page: 0, list: [] },
         new: { page: 0, list: [] },
-        sell: { page: 0, list: [] },
+        sell: { page: 0, list: [] }
       },
       currentGoods: "pop",
       bs: null,
       scrollPosition: 0,
+      TabControlOffsetTop: 0,
+      isShowTabControl: false
     };
   },
   created() {
-    getHomeMultidata().then((res) => {
+    getHomeMultidata().then(res => {
       this.banners = res.data.banner.list;
       this.recommends = res.data.recommend.list;
     });
@@ -86,7 +92,7 @@ export default {
        * 网络请求相关代码
        */
       let page = this.goods[type].page + 1;
-      getGoodsMultidata(type, page).then((res) => {
+      getGoodsMultidata(type, page).then(res => {
         // page不正常
         // console.log(page);
 
@@ -122,8 +128,16 @@ export default {
     },
     backtopBlock(params) {
       this.scrollPosition = params;
+      // console.log(this.TabControlOffsetTop);
+      this.isShowTabControl = -params > this.TabControlOffsetTop;
+      // console.log(this.TabControlOffsetTop);
+      // console.log(this.scrollPosition);
     },
+    imgLoaded() {
+      this.TabControlOffsetTop = this.$refs.tabcontrol.$el.offsetTop - 44;
+    }
   },
+  mounted() {}
 };
 </script>
 
@@ -137,12 +151,11 @@ export default {
   color: #fff;
 }
 .tab-control {
-  position: sticky;
-  top: 44px;
   background: #fff;
   z-index: 1;
 }
 .wrapper {
   height: 520px;
+  overflow: hidden;
 }
 </style>
