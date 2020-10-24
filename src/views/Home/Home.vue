@@ -3,8 +3,8 @@
     <NavBar class="Home-center">
       <div slot="center">购物街</div>
     </NavBar>
-    <div class="wrapper" ref="boxs">
-      <div class="content">
+    <div class="wrapper">
+      <Scroll class="content" @pullingLoad="pullingLoad" ref="Scroll">
         <HomeSwiper :banners="banners"></HomeSwiper>
         <HomeRecommend :recommends="recommends"></HomeRecommend>
         <FeatureView></FeatureView>
@@ -14,7 +14,7 @@
           @currentControlClick="currentControlClick"
         ></TabControl>
         <MainGoods :goodsList="goods[currentGoods].list" />
-      </div>
+      </Scroll>
     </div>
   </div>
 </template>
@@ -27,13 +27,9 @@ import HomeRecommend from "./childComponents/HomeRecommend";
 import FeatureView from "./childComponents/FeatureView";
 import TabControl from "components/content/tabcontrol/TabControl";
 import MainGoods from "components/content/goods/MainGoods";
+import Scroll from "components/common/scroll/Scroll";
 
 import { getHomeMultidata, getGoodsMultidata } from "network/home";
-
-//Bscroll 安装
-import BScroll from "@better-scroll/core";
-import Pullup from "@better-scroll/pull-up";
-BScroll.use(Pullup);
 
 export default {
   name: "Home",
@@ -43,7 +39,8 @@ export default {
     HomeRecommend,
     FeatureView,
     TabControl,
-    MainGoods
+    MainGoods,
+    Scroll,
   },
   data() {
     return {
@@ -54,14 +51,14 @@ export default {
         //定义商品列表
         pop: { page: 0, list: [] },
         new: { page: 0, list: [] },
-        sell: { page: 0, list: [] }
+        sell: { page: 0, list: [] },
       },
       currentGoods: "pop",
-      bs: null
+      bs: null,
     };
   },
   created() {
-    getHomeMultidata().then(res => {
+    getHomeMultidata().then((res) => {
       this.banners = res.data.banner.list;
       this.recommends = res.data.recommend.list;
     });
@@ -70,43 +67,28 @@ export default {
     this.getGoodsMultidata("new");
     this.getGoodsMultidata("sell");
   },
-  mounted() {
-    /*
-     * 滚动相关的代码
-     */
-    setTimeout(() => {
-      this.bs = new BScroll(this.$refs.boxs, {
-        probeType: 3,
-        pullUpLoad: true,
-        click: true
-      });
-      this.bs.on("pullingUp", () => {
-        this.getGoodsMultidata(this.currentGoods); 
-        console.log("--");
-        // 回调钩子 告诉框架已经准备好了下一次回调上拉加载更多
-        // 普通function中this指向 BScroll 的实例   箭头函数的this 指向Vue实例
-        this.bs.refresh();
-
-        setTimeout(() => {
-          this.bs.finishPullUp();
-        }, 1000);
-      });
-    }, 200);
-  },
   methods: {
+    pullingLoad() {
+      console.log("11");
+      this.getGoodsMultidata(this.currentGoods);
+    },
     getGoodsMultidata(type) {
       /*
        * 网络请求相关代码
        */
       let page = this.goods[type].page + 1;
-      getGoodsMultidata(type, page).then(res => {
+      getGoodsMultidata(type, page).then((res) => {
         // page不正常
         // console.log(page);
 
         // 将请求过来的数据追加goods中
         this.goods[type].list.push(...res.data.list);
         this.goods[type].page += 1;
-
+        setTimeout(() => {
+           this.$refs.Scroll.bs.refresh()
+           this.$refs.Scroll.bs.finishPullUp()
+        }, 1000);
+        // this.$refs.Scroll.bs.finishPullUp();
         //打印数据 正常
         // console.log(this.goods);
       });
@@ -125,12 +107,15 @@ export default {
           break;
       }
       console.log(this.currentGoods);
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style>
+#home {
+  height: 100vh;
+}
 .Home-center {
   text-align: center;
   background-color: var(--color-tint);
@@ -143,6 +128,6 @@ export default {
   z-index: 1;
 }
 .wrapper {
-  height: 570px;
+  height: 520px;
 }
 </style>
