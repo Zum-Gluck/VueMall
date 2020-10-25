@@ -15,32 +15,33 @@ export default {
   name: "Scroll",
   data() {
     return {
-      bs: null,
+      bs: null
     };
   },
   mounted() {
-    console.log(this.$refs.wrapper);
     setTimeout(() => {
       this.bs = new BScroll(this.$refs.wrapper, {
         probeType: 3,
         pullUpLoad: true,
-        click: true,
+        click: true
       });
-      this.bs.on("scroll", (p) => {
+      this.bs.on("scroll", p => {
         this.$emit("backtopBlock", p.y);
       });
       this.bs.on("pullingUp", () => {
-        // this.bs.refresh();
+        this.bs.refresh();
         this.$emit("pullingLoad");
-        // this.bs.finishPullUp();
       });
     }, 600);
+  },
+  activated() {
+    console.log(this.bs);
   },
   methods: {
     ScrollTo(x, y, time = 500) {
       this.bs.scrollTo(x, y, time);
-    },
-  },
+    }
+  }
 };
 </script>
 

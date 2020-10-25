@@ -113,16 +113,16 @@ export default {
   name: "ProFile",
   data() {
     return {
-      bs: null
+      as: null
     };
   },
   mounted() {
-    this.bs = new BScroll(this.$refs.box, {
+    this.as = new BScroll(this.$refs.box, {
       probeType: 3,
       pullUpLoad: true
     });
 
-    this.bs.on("pullingUp", function() {
+    this.as.on("pullingUp", function() {
       console.log("--");
       // 回调钩子 告诉框架已经准备好了下一次回调
       this.finishPullUp();

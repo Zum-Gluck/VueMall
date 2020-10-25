@@ -69,7 +69,8 @@ export default {
       bs: null,
       scrollPosition: 0,
       TabControlOffsetTop: 0,
-      isShowTabControl: false
+      isShowTabControl: false,
+      saveY: 0
     };
   },
   created() {
@@ -82,9 +83,17 @@ export default {
     this.getGoodsMultidata("new");
     this.getGoodsMultidata("sell");
   },
+  deactivated() {
+    this.saveY = this.$refs.Scroll.bs.y;
+  },
+  activated() {
+    if (this.$refs.Scroll.bs) {
+      this.$refs.Scroll.ScrollTo(0, this.saveY, 0);
+    }
+  },
   methods: {
     pullingLoad() {
-      console.log("11");
+      console.log("到达底部");
       this.getGoodsMultidata(this.currentGoods);
     },
     getGoodsMultidata(type) {
@@ -100,16 +109,21 @@ export default {
         this.goods[type].list.push(...res.data.list);
         this.goods[type].page += 1;
         setTimeout(() => {
+          // this.$refs.Scroll.ScrollTo(0, 0);
           this.$refs.Scroll.bs.refresh();
           this.$refs.Scroll.bs.finishPullUp();
-        }, 1000);
-        // this.$refs.Scroll.bs.finishPullUp();
+          // console.log(this);
+        }, 500);
+
         //打印数据 正常
         // console.log(this.goods);
       });
     },
     currentControlClick(index) {
-      console.log(index);
+      setTimeout(() => {
+        // this.$refs.ScrollTo;
+        this.$refs.Scroll.bs.refresh();
+      }, 800);
       switch (index) {
         case 0:
           this.currentGoods = "pop";
@@ -121,7 +135,6 @@ export default {
           this.currentGoods = "sell";
           break;
       }
-      console.log(this.currentGoods);
     },
     BackTopClick() {
       this.$refs.Scroll.ScrollTo(0, 0);
@@ -136,8 +149,7 @@ export default {
     imgLoaded() {
       this.TabControlOffsetTop = this.$refs.tabcontrol.$el.offsetTop - 44;
     }
-  },
-  mounted() {}
+  }
 };
 </script>
 
