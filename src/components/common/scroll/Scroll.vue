@@ -35,7 +35,6 @@ export default {
     }, 600);
   },
   activated() {
-    console.log(this.bs);
   },
   methods: {
     ScrollTo(x, y, time = 500) {

@@ -1,21 +1,13 @@
 <template>
-  <div>
-    <DetailsNavBar></DetailsNavBar>
-    <DetailsSwiper :TopImages="TopImages"></DetailsSwiper>
-    <DetailsGoodsInfo :goodsInfo="goodsInfo"></DetailsGoodsInfo>
-    <DetailsShop :shopInfo="shopInfo"></DetailsShop>
-    <ul>
-      <li>1</li>
-      <li>2</li>
-      <li>3</li>
-      <li>4</li>
-      <li>5</li>
-      <li>6</li>
-      <li>7</li>
-      <li>8</li>
-      <li>9</li>
-      <li>10</li>
-    </ul>
+  <div id="Details">
+    <DetailsNavBar id="DetailsNavBar"></DetailsNavBar>
+    <Scroll class="content" ref="DetailsScroll">
+      <DetailsSwiper :TopImages="TopImages"></DetailsSwiper>
+      <DetailsGoodsInfo :goodsInfo="goodsInfo"></DetailsGoodsInfo>
+      <DetailsShop :shopInfo="shopInfo"></DetailsShop>
+      <DetailsPicture :goodsPicture="goodsPicture"></DetailsPicture>
+      <DetailsComment :goodsParams="goodsParams" :goodsTable="goodsTable"></DetailsComment>
+    </Scroll>
   </div>
 </template>
 
@@ -24,7 +16,10 @@ import DetailsNavBar from "./childComponents/DetailsNavBar";
 import DetailsSwiper from "./childComponents/DetailsSwiper";
 import DetailsGoodsInfo from "./childComponents/DetailsGoodsInfo";
 import DetailsShop from "./childComponents/DetailsShop";
+import DetailsPicture from "./childComponents/DetailsPicture";
+import DetailsComment from "./childComponents/DetailsComment";
 
+import Scroll from "components/common/scroll/Scroll";
 // 的网络请求
 import { GetDetasMultidata, shopInfo } from "network/details";
 
@@ -39,22 +34,28 @@ export default {
         price: "",
         oldPrice: "",
         columns: [],
-        services: []
+        services: [],
       },
-      shopInfo: {}
+      shopInfo: {},
+      goodsPicture: [],
+      goodsParams: [],
+      goodsTable:[]
     };
   },
   components: {
     DetailsNavBar,
     DetailsSwiper,
     DetailsGoodsInfo,
-    DetailsShop
+    DetailsShop,
+    Scroll,
+    DetailsPicture,
+    DetailsComment,
   },
   created() {
     /*
      *  网络请求相关的代码
      */
-    GetDetasMultidata(this.$route.params.iid).then(res => {
+    GetDetasMultidata(this.$route.params.iid).then((res) => {
       console.log(res);
 
       /*
@@ -72,14 +73,48 @@ export default {
       this.goodsInfo.services.push(...res.result.shopInfo.services); //七天无理由退货
 
       /*
-       * 店铺信息
+       * 店铺数据
        */
       this.shopInfo = new shopInfo(res.result.shopInfo);
-      // console.log(this.shopInfo);
+
+      /*
+       * 商品图片
+       */
+      this.goodsPicture = res.result.detailInfo.detailImage[0].list;
+
+      /**
+       * 商品参数
+       */
+      this.goodsParams = res.result.itemParams.info.set;
+      this.goodsTable = res.result.itemParams.rule.tables[0];
+
+
+
+
+
+
+
+      setTimeout(() => {
+        this.$refs.DetailsScroll.bs.refresh();
+      }, 2000);
     });
-  }
+  },
 };
 </script>
 
-<style>
+<style scoped>
+#Details {
+  position: relative;
+  z-index: 99;
+  background-color: #fff;
+  overflow-y: hidden;
+}
+.content {
+  height: 523px;
+}
+#DetailsNavBar {
+  position: relative;
+  z-index: 9;
+  background-color: #fff;
+}
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div id="home">
+  <div id="home" ref="homeDisable">
     <NavBar class="Home-center">
       <div slot="center">购物街</div>
     </NavBar>
@@ -8,22 +8,27 @@
       :titles="['新款', '流行', '促销']"
       @currentControlClick="currentControlClick"
       ref="tabcontrol"
-      v-show=" isShowTabControl"
+      v-show="isShowTabControl"
     ></TabControl>
     <div class="wrapper">
-      <Scroll class="content" @pullingLoad="pullingLoad" ref="Scroll" @backtopBlock="backtopBlock">
-        <HomeSwiper :banners="banners" @imgLoaded="imgLoaded"></HomeSwiper>
-        <HomeRecommend :recommends="recommends"></HomeRecommend>
-        <FeatureView></FeatureView>
-        <TabControl
-          class="tab-control"
-          :titles="['新款', '流行', '促销']"
-          @currentControlClick="currentControlClick"
-          ref="tabcontrol"
-          v-show="!isShowTabControl"
-        ></TabControl>
-        <MainGoods :goodsList="goods[currentGoods].list" />
-      </Scroll>
+        <Scroll
+          class="content"
+          @pullingLoad="pullingLoad"
+          ref="Scroll"
+          @backtopBlock="backtopBlock"
+        >
+          <HomeSwiper :banners="banners" @imgLoaded="imgLoaded"></HomeSwiper>
+          <HomeRecommend :recommends="recommends"></HomeRecommend>
+          <FeatureView></FeatureView>
+          <TabControl
+            class="tab-control"
+            :titles="['新款', '流行', '促销']"
+            @currentControlClick="currentControlClick"
+            ref="tabcontrol"
+            v-show="!isShowTabControl"
+          ></TabControl>
+          <MainGoods :goodsList="goods[currentGoods].list" />
+        </Scroll>
       <BackTop @click.native="BackTopClick" v-show="scrollPosition < -500" />
     </div>
   </div>
@@ -52,7 +57,7 @@ export default {
     TabControl,
     MainGoods,
     Scroll,
-    BackTop
+    BackTop,
   },
   data() {
     return {
@@ -63,18 +68,19 @@ export default {
         //定义商品列表
         pop: { page: 0, list: [] },
         new: { page: 0, list: [] },
-        sell: { page: 0, list: [] }
+        sell: { page: 0, list: [] },
       },
       currentGoods: "pop",
       bs: null,
       scrollPosition: 0,
       TabControlOffsetTop: 0,
       isShowTabControl: false,
-      saveY: 0
+      saveY: 0,
+      MyRefresh: null,
     };
   },
   created() {
-    getHomeMultidata().then(res => {
+    getHomeMultidata().then((res) => {
       this.banners = res.data.banner.list;
       this.recommends = res.data.recommend.list;
     });
@@ -84,11 +90,16 @@ export default {
     this.getGoodsMultidata("sell");
   },
   deactivated() {
+    console.log(this.$refs.Scroll.bs.y);
     this.saveY = this.$refs.Scroll.bs.y;
   },
   activated() {
+    console.log(this.$refs.homeDisable);
+    console.log("HOME处于活跃");
     if (this.$refs.Scroll.bs) {
-      this.$refs.Scroll.ScrollTo(0, this.saveY, 0);
+      this.$refs.Scroll.ScrollTo(0, this.saveY);
+      console.log(this.$refs.Scroll.bs.y);
+      // console.log(this.MyRefresh());
     }
   },
   methods: {
@@ -101,8 +112,7 @@ export default {
        * 网络请求相关代码
        */
       let page = this.goods[type].page + 1;
-      getGoodsMultidata(type, page).then(res => {
-        // page不正常
+      getGoodsMultidata(type, page).then((res) => {
         // console.log(page);
 
         // 将请求过来的数据追加goods中
@@ -111,6 +121,7 @@ export default {
         setTimeout(() => {
           // this.$refs.Scroll.ScrollTo(0, 0);
           this.$refs.Scroll.bs.refresh();
+          this.MyRefresh = this.$refs.Scroll.bs.refresh;
           this.$refs.Scroll.bs.finishPullUp();
           // console.log(this);
         }, 500);
@@ -120,10 +131,11 @@ export default {
       });
     },
     currentControlClick(index) {
+      // console.log(this.$refs.Scroll.bs.scrollTo());
       setTimeout(() => {
         // this.$refs.ScrollTo;
         this.$refs.Scroll.bs.refresh();
-      }, 800);
+      }, 300);
       switch (index) {
         case 0:
           this.currentGoods = "pop";
@@ -141,21 +153,27 @@ export default {
     },
     backtopBlock(params) {
       this.scrollPosition = params;
-      // console.log(this.TabControlOffsetTop);
-      this.isShowTabControl = -params > this.TabControlOffsetTop;
-      // console.log(this.TabControlOffsetTop);
-      // console.log(this.scrollPosition);
+      // this.isShowTabControl = -params > this.TabControlOffsetTop;
+      if (-params > this.TabControlOffsetTop) {
+        this.isShowTabControl = true;
+        setTimeout(() => {
+          this.$refs.Scroll.bs.refresh();
+        }, 2000);
+      } else {
+        this.isShowTabControl = false;
+      }
     },
     imgLoaded() {
       this.TabControlOffsetTop = this.$refs.tabcontrol.$el.offsetTop - 44;
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style>
 #home {
   height: 100vh;
+  overflow-y: hidden;
 }
 .Home-center {
   text-align: center;
@@ -164,7 +182,7 @@ export default {
 }
 .tab-control {
   background: #fff;
-  z-index: 1;
+  z-index: 99;
 }
 .wrapper {
   height: 520px;
