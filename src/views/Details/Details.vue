@@ -6,7 +6,8 @@
       <DetailsGoodsInfo :goodsInfo="goodsInfo"></DetailsGoodsInfo>
       <DetailsShop :shopInfo="shopInfo"></DetailsShop>
       <DetailsPicture :goodsPicture="goodsPicture"></DetailsPicture>
-      <DetailsComment :goodsParams="goodsParams" :goodsTable="goodsTable"></DetailsComment>
+      <DetailsParams :goodsParams="goodsParams" :goodsTable="goodsTable"></DetailsParams>
+      <DetailsComment :goodsComment="goodsComment"></DetailsComment>
     </Scroll>
   </div>
 </template>
@@ -17,6 +18,7 @@ import DetailsSwiper from "./childComponents/DetailsSwiper";
 import DetailsGoodsInfo from "./childComponents/DetailsGoodsInfo";
 import DetailsShop from "./childComponents/DetailsShop";
 import DetailsPicture from "./childComponents/DetailsPicture";
+import DetailsParams from "./childComponents/DetailsParams";
 import DetailsComment from "./childComponents/DetailsComment";
 
 import Scroll from "components/common/scroll/Scroll";
@@ -34,12 +36,13 @@ export default {
         price: "",
         oldPrice: "",
         columns: [],
-        services: [],
+        services: []
       },
       shopInfo: {},
       goodsPicture: [],
       goodsParams: [],
-      goodsTable:[]
+      goodsTable: [],
+      goodsComment:{}
     };
   },
   components: {
@@ -49,13 +52,14 @@ export default {
     DetailsShop,
     Scroll,
     DetailsPicture,
-    DetailsComment,
+    DetailsParams,
+    DetailsComment
   },
   created() {
     /*
      *  网络请求相关的代码
      */
-    GetDetasMultidata(this.$route.params.iid).then((res) => {
+    GetDetasMultidata(this.$route.params.iid).then(res => {
       console.log(res);
 
       /*
@@ -88,6 +92,13 @@ export default {
       this.goodsParams = res.result.itemParams.info.set;
       this.goodsTable = res.result.itemParams.rule.tables[0];
 
+      /***
+       * 商品评论
+       */
+      this.goodsComment = res.result.rate.list[0]
+
+
+
 
 
 
@@ -98,7 +109,7 @@ export default {
         this.$refs.DetailsScroll.bs.refresh();
       }, 2000);
     });
-  },
+  }
 };
 </script>
 

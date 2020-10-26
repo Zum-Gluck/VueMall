@@ -1,16 +1,19 @@
 <template>
-  <div>
-    <table class="ParamsTable">
-      <tr v-for="(item, index) in goodsTable" :key="index">
-        <td v-for="(Citem, Cindex) in item" :key="Cindex">{{ Citem }}</td>
-      </tr>
-    </table>
-    <table class="Params">
-      <tr v-for="(item, index) in goodsParams" :key="index">
-        <td>{{ item.key }}</td>
-        <td>{{ item.value }}</td>
-      </tr>
-    </table>
+  <div id="comment">
+    <div class="comment_top">
+      <div class="user_comment">用户评价</div>
+      <div class="comment_more">更多</div>
+    </div>
+    <div class="userInfo">
+      <div v-if="goodsComment.user" class="user">
+        <img :src="goodsComment.user.avatar" alt />
+      </div>
+      <span class="uname" v-if="goodsComment.user">{{goodsComment.user.uname}}</span>
+    </div>
+    <p class="comment_p">{{goodsComment.content}}</p>
+    <div class="comment_pic">
+      
+    </div>
   </div>
 </template>
 
@@ -18,78 +21,65 @@
 export default {
   name: "DetailsComment",
   props: {
-    goodsParams: {
-      type: Array,
+    goodsComment: {
+      type: Object,
       default() {
-        return [];
-      },
-    },
-    goodsTable: {
-      type: Array,
-      default() {
-        return [];
-      },
-    },
+        return {};
+      }
+    }
+  },
+  computed: {
+    user_avatar() {
+      return this.goodsComment.user.avatar;
+    }
   },
   created() {
     setTimeout(() => {
-      console.log(this.goodsParams);
-      // console.log(this.goodsTable);
+      console.log(this.goodsComment);
     }, 3000);
-  },
+  }
 };
 </script>
 
-<style>
-.ParamsTable {
-  padding: 0 10px 0;
+<style scoped>
+#comment {
+  text-align: center;
+  padding: 0 15px;
 }
-.ParamsTable tr {
-  width: 280px;
+.comment_top {
+  display: flex;
+  height: 45px;
+  line-height: 45px;
   justify-content: space-between;
-  border-bottom: 1px solid #ccc;
+  font-size: 15px;
+  border-top: 3px solid #f6f5f8;
+  border-bottom: 1px solid #f1f1f1;
 }
-.ParamsTable td {
-  width: 50px;
-  height: 40px;
-  line-height: 40px;
-  font-size: 13px;
-  text-align: center;
-}
-.ParamsTable td:last-child {
-  padding-right: 20px;
-  box-sizing: content-box;
-}
-.ParamsTable tr:last-child {
-  border-bottom: 2px solid #ccc;
-}
-
-.Params {
-  padding: 0 10px 0;
-}
-.Params tr {
-  position: relative;
-}
-.Params td {
-  width: 50px;
-  height: 40px;
-  line-height: 40px;
-  font-size: 13px;
-  text-align: center;
-}
-.Params tr td:last-child {
+.userInfo {
+  margin-top: 10px;
   text-align: left;
-  width: 140px;
-  padding-left: 10px;
-  color: var(--color-tint);
 }
-.Params tr::after{
-  position: absolute;
-  left: 10px;
-  display: block;
-  content: '';
-  width: 200px;
-  height: 0.5px;
-  background-color: #ccc;
+.user {
+  display: inline-block;
+  width: 47px;
+  height: 47px;
+  border-radius: 50%;
+  overflow: hidden;
+  vertical-align: middle;
+}
+.user img {
+  width: 100%;
+  height: 100%;
+}
+.uname {
+  margin-left: 10px;
+  font-size: 15px;
+}
+.comment_p {
+  margin-top: 10px;
+  color: #8f8f8f;
+  line-height: 18px;
+  font-size: 13px;
+  text-align: left;
 }
 </style>
