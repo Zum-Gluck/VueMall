@@ -8,16 +8,26 @@
       <div v-if="goodsComment.user" class="user">
         <img :src="goodsComment.user.avatar" alt />
       </div>
-      <span class="uname" v-if="goodsComment.user">{{goodsComment.user.uname}}</span>
+      <span class="uname" v-if="goodsComment.user">{{
+        goodsComment.user.uname
+      }}</span>
     </div>
-    <p class="comment_p">{{goodsComment.content}}</p>
+    <p class="comment_p">{{ goodsComment.content }}</p>
+    <div class="comment_date">
+      {{ goodsComment.created | commentDate }} {{ goodsComment.style }}
+    </div>
     <div class="comment_pic">
-      
+      <img
+        v-for="(item, index) in goodsComment.images"
+        :key="index"
+        :src="item"
+      />
     </div>
   </div>
 </template>
 
 <script>
+import { dateFormat } from "commonTools/dateFormat";
 export default {
   name: "DetailsComment",
   props: {
@@ -25,19 +35,25 @@ export default {
       type: Object,
       default() {
         return {};
-      }
-    }
+      },
+    },
+  },
+  data() {
+    return {
+      date: this.goodsComment.created,
+    };
   },
   computed: {
     user_avatar() {
       return this.goodsComment.user.avatar;
-    }
+    },
   },
-  created() {
-    setTimeout(() => {
-      console.log(this.goodsComment);
-    }, 3000);
-  }
+  filters: {
+    commentDate(value) {
+      value = new Date(value * 1000);
+      return dateFormat("yyyy-mm-dd", value);
+    },
+  },
 };
 </script>
 
@@ -81,5 +97,21 @@ export default {
   line-height: 18px;
   font-size: 13px;
   text-align: left;
+}
+.comment_date {
+  margin: 10px 0;
+  text-align: left;
+  font-size: 12px;
+  color: #8f8f8f;
+}
+.comment_pic {
+  display: flex;
+  width: 55px;
+  height: 55px;
+}
+.comment_pic img {
+  width: 100%;
+  height: 100%;
+  margin-right: 3px;
 }
 </style>

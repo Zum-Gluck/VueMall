@@ -1,7 +1,7 @@
 <template>
   <div id="DetailsPicture">
     <li v-for="(item, index) in goodsPicture" :key="index">
-      <img :src="item" alt="" />
+      <img :src="item" alt="" @load="PicLoad" />
     </li>
   </div>
 </template>
@@ -15,6 +15,19 @@ export default {
       default() {
         return [];
       },
+    },
+  },
+  data() {
+    return {
+      LoadCount: 0,
+    };
+  },
+  methods: {
+    PicLoad() {
+      this.LoadCount++;
+      if (this.LoadCount === this.goodsPicture.length) {
+        this.$emit("PicLoad");
+      }
     },
   },
 };

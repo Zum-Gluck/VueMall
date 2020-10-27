@@ -38,6 +38,7 @@ export default {
   },
   methods: {
     ScrollTo(x, y, time = 500) {
+      console.log("---");
       this.bs.scrollTo(x, y, time);
     }
   }

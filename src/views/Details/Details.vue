@@ -1,14 +1,31 @@
 <template>
   <div id="Details">
-    <DetailsNavBar id="DetailsNavBar"></DetailsNavBar>
-    <Scroll class="content" ref="DetailsScroll">
-      <DetailsSwiper :TopImages="TopImages"></DetailsSwiper>
+    <DetailsNavBar id="DetailsNavBar" :CurrentNavBar="CurrentNavBar"></DetailsNavBar>
+    <Scroll class="content" ref="Scroll" @backtopBlock="backtopBlock">
+      <DetailsSwiper
+        :TopImages="TopImages"
+        @SwiperLoad="SwiperLoad"
+      ></DetailsSwiper>
       <DetailsGoodsInfo :goodsInfo="goodsInfo"></DetailsGoodsInfo>
       <DetailsShop :shopInfo="shopInfo"></DetailsShop>
-      <DetailsPicture :goodsPicture="goodsPicture"></DetailsPicture>
-      <DetailsParams :goodsParams="goodsParams" :goodsTable="goodsTable"></DetailsParams>
+      <DetailsPicture
+        :goodsPicture="goodsPicture"
+        @PicLoad="PicLoad"
+      ></DetailsPicture>
+      <DetailsParams
+        :goodsParams="goodsParams"
+        :goodsTable="goodsTable"
+      ></DetailsParams>
       <DetailsComment :goodsComment="goodsComment"></DetailsComment>
+      <div class="goodsa">
+        <GoodsItem
+          v-for="(item, index) in goodsRecommend"
+          :key="index"
+          :goodsItem="item"
+        ></GoodsItem>
+      </div>
     </Scroll>
+    <BackTop @click.native="BackTop" v-show="scrollPosition < -500"></BackTop>
   </div>
 </template>
 
@@ -20,10 +37,12 @@ import DetailsShop from "./childComponents/DetailsShop";
 import DetailsPicture from "./childComponents/DetailsPicture";
 import DetailsParams from "./childComponents/DetailsParams";
 import DetailsComment from "./childComponents/DetailsComment";
-
 import Scroll from "components/common/scroll/Scroll";
+import GoodsItem from "../../components/content/goods/GoodsItem";
+import BackTop from "../../components/content/backtop/BackTop";
+
 // 的网络请求
-import { GetDetasMultidata, shopInfo } from "network/details";
+import { GetDetasMultidata, shopInfo, GetRecommend } from "network/details";
 
 export default {
   name: "Details",
@@ -36,13 +55,16 @@ export default {
         price: "",
         oldPrice: "",
         columns: [],
-        services: []
+        services: [],
       },
       shopInfo: {},
       goodsPicture: [],
       goodsParams: [],
       goodsTable: [],
-      goodsComment:{}
+      goodsComment: {},
+      goodsRecommend: [],
+      scrollPosition: 0,
+      CurrentNavBar: 0,
     };
   },
   components: {
@@ -53,13 +75,15 @@ export default {
     Scroll,
     DetailsPicture,
     DetailsParams,
-    DetailsComment
+    DetailsComment,
+    GoodsItem,
+    BackTop,
   },
   created() {
     /*
      *  网络请求相关的代码
      */
-    GetDetasMultidata(this.$route.params.iid).then(res => {
+    GetDetasMultidata(this.$route.params.iid).then((res) => {
       console.log(res);
 
       /*
@@ -95,21 +119,32 @@ export default {
       /***
        * 商品评论
        */
-      this.goodsComment = res.result.rate.list[0]
-
-
-
-
-
-
-
-
-
-      setTimeout(() => {
-        this.$refs.DetailsScroll.bs.refresh();
-      }, 2000);
+      this.goodsComment = res.result.rate.list[0];
     });
-  }
+
+    GetRecommend().then((result) => {
+      this.goodsRecommend = result.data.list;
+    });
+  },
+  methods: {
+    PicLoad() {
+      this.$refs.Scroll.bs && this.$refs.Scroll.bs.refresh();
+    },
+    SwiperLoad() {
+      this.$refs.Scroll.bs && this.$refs.Scroll.bs.refresh();
+    },
+    BackTop() {
+      console.log(11);
+      this.$refs.Scroll.ScrollTo(0, 0);
+    },
+    backtopBlock(params) {
+      console.log(params);
+      if (params > 300) {
+        this.CurrentNavBar = 3;
+      }
+      this.scrollPosition = params;
+    },
+  },
 };
 </script>
 
@@ -127,5 +162,11 @@ export default {
   position: relative;
   z-index: 9;
   background-color: #fff;
+}
+.goodsa {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  padding: 2px;
 }
 </style>

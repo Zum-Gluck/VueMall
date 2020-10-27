@@ -22,6 +22,14 @@ import NavBar from "components/common/navbar/NavBar";
 
 export default {
   name: "DetailsNavBar",
+  props:{
+    CurrentNavBar:{
+      type:Number,
+      default(){
+        return 0
+      }
+    }
+  },
   data() {
     return {
       titles: ["商品", "评论", "参数", "推荐"],

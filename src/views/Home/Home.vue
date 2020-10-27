@@ -11,24 +11,24 @@
       v-show="isShowTabControl"
     ></TabControl>
     <div class="wrapper">
-        <Scroll
-          class="content"
-          @pullingLoad="pullingLoad"
-          ref="Scroll"
-          @backtopBlock="backtopBlock"
-        >
-          <HomeSwiper :banners="banners" @imgLoaded="imgLoaded"></HomeSwiper>
-          <HomeRecommend :recommends="recommends"></HomeRecommend>
-          <FeatureView></FeatureView>
-          <TabControl
-            class="tab-control"
-            :titles="['新款', '流行', '促销']"
-            @currentControlClick="currentControlClick"
-            ref="tabcontrol"
-            v-show="!isShowTabControl"
-          ></TabControl>
-          <MainGoods :goodsList="goods[currentGoods].list" />
-        </Scroll>
+      <Scroll
+        class="content"
+        @pullingLoad="pullingLoad"
+        ref="Scroll"
+        @backtopBlock="backtopBlock"
+      >
+        <HomeSwiper :banners="banners" @imgLoaded="imgLoaded"></HomeSwiper>
+        <HomeRecommend :recommends="recommends"></HomeRecommend>
+        <FeatureView></FeatureView>
+        <TabControl
+          class="tab-control"
+          :titles="['新款', '流行', '促销']"
+          @currentControlClick="currentControlClick"
+          ref="tabcontrol"
+          v-show="!isShowTabControl"
+        ></TabControl>
+        <MainGoods :goodsList="goods[currentGoods].list" />
+      </Scroll>
       <BackTop @click.native="BackTopClick" v-show="scrollPosition < -500" />
     </div>
   </div>
@@ -39,7 +39,7 @@ import NavBar from "components/common/navbar/NavBar";
 import HomeSwiper from "./childComponents/HomeSwiper";
 import HomeRecommend from "./childComponents/HomeRecommend";
 
-import FeatureView from "./childComponents/FeatureView";
+import FeatureView from "components/content/featureview/FeatureView";
 import TabControl from "components/content/tabcontrol/TabControl";
 import MainGoods from "components/content/goods/MainGoods";
 import Scroll from "components/common/scroll/Scroll";
@@ -90,16 +90,12 @@ export default {
     this.getGoodsMultidata("sell");
   },
   deactivated() {
-    console.log(this.$refs.Scroll.bs.y);
     this.saveY = this.$refs.Scroll.bs.y;
   },
   activated() {
-    console.log(this.$refs.homeDisable);
-    console.log("HOME处于活跃");
     if (this.$refs.Scroll.bs) {
       this.$refs.Scroll.ScrollTo(0, this.saveY);
-      console.log(this.$refs.Scroll.bs.y);
-      // console.log(this.MyRefresh());
+      this.$refs.Scroll.bs.refresh();
     }
   },
   methods: {

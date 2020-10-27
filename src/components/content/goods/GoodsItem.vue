@@ -1,10 +1,10 @@
 <template>
   <div class="goods-item" @click="GoodsItemClick">
-    <img :src="goodsItem.show.img" alt />
+    <img :src="GoodsImg" alt />
     <div class="goods-info">
-      <p>{{goodsItem.title}}</p>
-      <span class="price">{{goodsItem.price}}</span>
-      <span class="collect">{{goodsItem.cfav}}</span>
+      <p>{{ goodsItem.title }}</p>
+      <span class="price">{{ goodsItem.price }}</span>
+      <span class="collect">{{ goodsItem.cfav }}</span>
     </div>
   </div>
 </template>
@@ -16,15 +16,22 @@ export default {
     goodsItem: {
       type: Object,
       default() {
-        return [];
-      }
-    }
+        return {};
+      },
+    },
+  },
+  computed: {
+    GoodsImg() {
+      return this.goodsItem.show
+        ? this.goodsItem.show.img
+        : this.goodsItem.image;
+    },
   },
   methods: {
     GoodsItemClick() {
       this.$router.push("/details/" + this.goodsItem.iid);
-    }
-  }
+    },
+  },
 };
 </script>
 

@@ -1,7 +1,7 @@
  <template>
   <Swiper class="main_Swiper">
     <SwiperItem v-for="item in TopImages" :key="item">
-      <img :src="item" />
+      <img :src="item" @load="SwiperLoad" />
     </SwiperItem>
   </Swiper>
 </template>
@@ -15,13 +15,26 @@ export default {
       type: Array,
       default() {
         return [];
-      }
-    }
+      },
+    },
   },
   components: {
     Swiper,
-    SwiperItem
-  }
+    SwiperItem,
+  },
+  data() {
+    return {
+      LoadCount: 0,
+    };
+  },
+  methods: {
+    SwiperLoad() {
+      this.LoadCount++;
+      if (this.LoadCount == this.TopImages.length) {
+        this.$emit("SwiperLoad");
+      }
+    },
+  },
 };
 </script>
 
