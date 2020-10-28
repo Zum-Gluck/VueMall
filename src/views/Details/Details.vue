@@ -1,35 +1,17 @@
 <template>
   <div id="Details">
-    <DetailsNavBar
-      id="DetailsNavBar"
-      @DetailsNavClick="DetailsNavClick"
-      ref="detailNavBar"
-    ></DetailsNavBar>
-    <DetailsBottom></DetailsBottom>
+    {{$store.state.cartList.length}}
+    <DetailsNavBar id="DetailsNavBar" @DetailsNavClick="DetailsNavClick" ref="detailNavBar"></DetailsNavBar>
+    <DetailsBottom @joinShopCar="joinShopCar"></DetailsBottom>
     <Scroll class="content" ref="Scroll" @backtopBlock="backtopBlock">
-      <DetailsSwiper
-        :TopImages="TopImages"
-        @SwiperLoad="SwiperLoad"
-        class="detail-set-scroll"
-      ></DetailsSwiper>
+      <DetailsSwiper :TopImages="TopImages" @SwiperLoad="SwiperLoad" class="detail-set-scroll"></DetailsSwiper>
       <DetailsGoodsInfo :goodsInfo="goodsInfo"></DetailsGoodsInfo>
       <DetailsShop :shopInfo="shopInfo"></DetailsShop>
       <DetailsPicture :goodsPicture="goodsPicture"></DetailsPicture>
-      <DetailsParams
-        :goodsParams="goodsParams"
-        :goodsTable="goodsTable"
-        class="detail-set-scroll"
-      ></DetailsParams>
-      <DetailsComment
-        :goodsComment="goodsComment"
-        class="detail-set-scroll"
-      ></DetailsComment>
+      <DetailsParams :goodsParams="goodsParams" :goodsTable="goodsTable" class="detail-set-scroll"></DetailsParams>
+      <DetailsComment :goodsComment="goodsComment" class="detail-set-scroll"></DetailsComment>
       <div class="goodsa detail-set-scroll">
-        <GoodsItem
-          v-for="(item, index) in goodsRecommend"
-          :key="index"
-          :goodsItem="item"
-        ></GoodsItem>
+        <GoodsItem v-for="(item, index) in goodsRecommend" :key="index" :goodsItem="item"></GoodsItem>
       </div>
     </Scroll>
     <BackTop @click.native="BackTop" v-show="scrollPosition < -500"></BackTop>
@@ -66,6 +48,7 @@ export default {
         columns: [],
         services: [],
         detailIndex: 0,
+        desc: ""
       },
       shopInfo: {},
       goodsPicture: [],
@@ -75,7 +58,7 @@ export default {
       goodsRecommend: [],
       scrollPosition: 0,
       classList: [],
-      newArr: [],
+      newArr: []
     };
   },
   components: {
@@ -89,13 +72,13 @@ export default {
     DetailsComment,
     GoodsItem,
     BackTop,
-    DetailsBottom,
+    DetailsBottom
   },
   created() {
     /*
      *  网络请求相关的代码
      */
-    GetDetasMultidata(this.$route.params.iid).then((res) => {
+    GetDetasMultidata(this.$route.params.iid).then(res => {
       console.log(res);
 
       /*
@@ -109,6 +92,7 @@ export default {
       this.goodsInfo.title = res.result.itemInfo.title; //商品标题
       this.goodsInfo.price = res.result.itemInfo.price; //商品现在的价格
       this.goodsInfo.oldPrice = res.result.itemInfo.oldPrice; //商品下划线价格
+      this.goodsInfo.desc = res.result.detailInfo.desc; // 商品提示
       this.goodsInfo.columns = res.result.columns; //商品服务
       this.goodsInfo.services.push(...res.result.shopInfo.services); //七天无理由退货
 
@@ -134,7 +118,7 @@ export default {
       this.goodsComment = res.result.rate.list[0];
     });
 
-    GetRecommend().then((result) => {
+    GetRecommend().then(result => {
       this.goodsRecommend = result.data.list;
     });
   },
@@ -148,6 +132,8 @@ export default {
     },
     backtopBlock(params) {
       this.getClassList();
+      // 由于加了底部栏 需要减去一些数值让NavBar 不出bug
+      params = params - 10;
       for (let i = 0; i < this.classList.length - 1; i++) {
         //用于判断当前出去哪个NavBar让相应的出去current状态
         if (
@@ -160,6 +146,7 @@ export default {
           }
         }
       }
+
       this.scrollPosition = params;
       // console.log(this.scrollPosition);
     },
@@ -178,6 +165,17 @@ export default {
       let el = document.getElementsByClassName("detail-set-scroll");
       this.$refs.Scroll.ScrollToElement(el[index], 300); //通过子组件传递过来的payload判断滚动到哪个Element
     },
+    joinShopCar() {
+      const product = {};
+      product.image = this.TopImages[0];
+      product.title = this.goodsInfo.title;
+      product.desc = this.goodsInfo.desc;
+      product.price = this.goodsInfo.price;
+      product.iid = this.iid;
+
+      // 将商品添加到VueX中
+      this.$store.commit("addCartList", product);
+    }
   },
   mounted() {
     this.$bus.$on(
@@ -193,7 +191,7 @@ export default {
   destroyed() {
     // 离开页面时  取消事件监听  有bug未处理
     this.$bus.$off();
-  },
+  }
 };
 </script>
 
@@ -203,7 +201,6 @@ export default {
   z-index: 99;
   background-color: #fff;
   overflow-y: hidden;
-  
 }
 .content {
   height: 475px;
@@ -218,5 +215,6 @@ export default {
   flex-wrap: wrap;
   justify-content: space-around;
   padding: 2px;
+  margin-top: 5px;
 }
 </style>

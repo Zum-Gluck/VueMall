@@ -19,7 +19,7 @@
           <div>店铺</div>
         </a>
       </li>
-      <li class="Bottom_item_right">
+      <li class="Bottom_item_right" @click="joinShopCar"> 
         <a href="#">加入购物车</a>
       </li>
       <li class="Bottom_item_right">
@@ -32,6 +32,11 @@
 <script>
 export default {
   name: "DetailsBottom",
+  methods:{
+    joinShopCar(){
+      this.$emit("joinShopCar")
+    }
+  }
 };
 </script>
 
