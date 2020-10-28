@@ -5,6 +5,7 @@
       @DetailsNavClick="DetailsNavClick"
       ref="detailNavBar"
     ></DetailsNavBar>
+    <DetailsBottom></DetailsBottom>
     <Scroll class="content" ref="Scroll" @backtopBlock="backtopBlock">
       <DetailsSwiper
         :TopImages="TopImages"
@@ -44,8 +45,9 @@ import DetailsPicture from "./childComponents/DetailsPicture";
 import DetailsParams from "./childComponents/DetailsParams";
 import DetailsComment from "./childComponents/DetailsComment";
 import Scroll from "components/common/scroll/Scroll";
-import GoodsItem from "../../components/content/goods/GoodsItem";
-import BackTop from "../../components/content/backtop/BackTop";
+import GoodsItem from "components/content/goods/GoodsItem";
+import BackTop from "components/content/backtop/BackTop";
+import DetailsBottom from "./childComponents/DetailsBottom";
 
 // 的网络请求
 import { GetDetasMultidata, shopInfo, GetRecommend } from "network/details";
@@ -87,6 +89,7 @@ export default {
     DetailsComment,
     GoodsItem,
     BackTop,
+    DetailsBottom,
   },
   created() {
     /*
@@ -136,16 +139,18 @@ export default {
     });
   },
   methods: {
-    SwiperLoad() {  // 轮播图加载完后 计算一次高度
+    SwiperLoad() {
+      // 轮播图加载完后 计算一次高度
       this.$refs.Scroll.bs && this.$refs.Scroll.bs.refresh();
     },
-    BackTop() { 
+    BackTop() {
       this.$refs.Scroll.ScrollTo(0, 0);
     },
     backtopBlock(params) {
       this.getClassList();
-      for (let i = 0; i < this.classList.length - 1; i++) {  //用于判断当前出去哪个NavBar让相应的出去current状态
-        if ( 
+      for (let i = 0; i < this.classList.length - 1; i++) {
+        //用于判断当前出去哪个NavBar让相应的出去current状态
+        if (
           -params > this.classList[i].offsetTop &&
           -params < this.classList[i + 1].offsetTop
         ) {
@@ -158,23 +163,25 @@ export default {
       this.scrollPosition = params;
       // console.log(this.scrollPosition);
     },
-    getClassList() { // 通过类名获取要操作的元素
+    getClassList() {
+      // 通过类名获取要操作的元素
       this.classList = [];
       this.classList = Array.from(
         document.getElementsByClassName("detail-set-scroll")
       );
-      let maxValue = 10000000;  // 解决数组下标越界的问题 
+      let maxValue = 10000000; // 解决数组下标越界的问题
       this.classList.push({ offsetTop: maxValue });
     },
     DetailsNavClick(index) {
       // 点击NavBar 滚动到对应位置
       this.getClassList();
       let el = document.getElementsByClassName("detail-set-scroll");
-      this.$refs.Scroll.ScrollToElement(el[index], 300);  //通过子组件传递过来的payload判断滚动到哪个Element
+      this.$refs.Scroll.ScrollToElement(el[index], 300); //通过子组件传递过来的payload判断滚动到哪个Element
     },
   },
   mounted() {
-    this.$bus.$on( // 事件总线 监听图片加载 调用refresh方法重新计算页面高度
+    this.$bus.$on(
+      // 事件总线 监听图片加载 调用refresh方法重新计算页面高度
       "PicLoad",
       debounce(() => {
         if (this.$refs.Scroll.bs !== undefined) {
@@ -182,9 +189,9 @@ export default {
         }
       }, 500)
     );
-
   },
-  destroyed() { // 离开页面时  取消事件监听  有bug未处理
+  destroyed() {
+    // 离开页面时  取消事件监听  有bug未处理
     this.$bus.$off();
   },
 };
@@ -196,9 +203,10 @@ export default {
   z-index: 99;
   background-color: #fff;
   overflow-y: hidden;
+  
 }
 .content {
-  height: 523px;
+  height: 475px;
 }
 #DetailsNavBar {
   position: relative;
