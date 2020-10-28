@@ -1,20 +1,26 @@
 <template>
   <div id="GoodsInfo">
-    <div class="title">{{title}}</div>
+    <div class="title">{{ title }}</div>
     <div class="price">
-      <span>{{Price}}</span>
-      <span>{{oldPrice}}</span>
+      <span>{{ Price }}</span>
+      <span>{{ oldPrice }}</span>
       <span>优惠价</span>
     </div>
     <div class="columns">
-      <div v-for="item of goodsInfo.columns" :key="item" class="columns-item">{{item}}</div>
+      <div v-for="item of goodsInfo.columns" :key="item" class="columns-item">
+        {{ item }}
+      </div>
     </div>
     <div class="Goods_icon">
-      <div v-for="(item,index) in goodsInfo.services" :key="index" class="icon">
+      <div
+        v-for="(item, index) in goodsInfo.services"
+        :key="index"
+        class="icon"
+      >
         <span>
           <img :src="item.icon" />
         </span>
-        <span>{{item.name}}</span>
+        <span class="shop_text">{{ item.name }}</span>
       </div>
     </div>
   </div>
@@ -28,8 +34,8 @@ export default {
       type: Object,
       default() {
         return {};
-      }
-    }
+      },
+    },
   },
   computed: {
     title() {
@@ -40,8 +46,8 @@ export default {
     },
     oldPrice() {
       return this.goodsInfo.oldPrice;
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -97,6 +103,10 @@ export default {
   height: 10px;
 }
 .icon {
+  height: 15px;
   font-size: 12px;
+  /* overflow: hidden; */
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 </style>

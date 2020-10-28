@@ -6,12 +6,14 @@
       </div>
       <div slot="center" class="NavBar-center">
         <div
-          v-for="(item,index) of titles"
+          v-for="(item, index) of titles"
           :key="index"
           class="Nav-item"
           @click="itemClick(index)"
-          :class="{'currentItem':index == currentIndex}"
-        >{{item}}</div>
+          :class="{ currentItem: index == currentIndex }"
+        >
+          {{ item }}
+        </div>
       </div>
     </NavBar>
   </div>
@@ -22,31 +24,32 @@ import NavBar from "components/common/navbar/NavBar";
 
 export default {
   name: "DetailsNavBar",
-  props:{
-    CurrentNavBar:{
-      type:Number,
-      default(){
-        return 0
-      }
-    }
+  props: {
+    CurrentNavBar: {
+      type: Number,
+      default() {
+        return 0;
+      },
+    },
   },
   data() {
     return {
-      titles: ["商品", "评论", "参数", "推荐"],
-      currentIndex: 0
+      titles: ["商品", "参数", " 评论", "推荐"],
+      currentIndex: 0,
     };
   },
   components: {
-    NavBar
+    NavBar,
   },
   methods: {
     itemClick(index) {
+      this.$emit("DetailsNavClick", index);
       this.currentIndex = index;
     },
     NavBack() {
       this.$router.back();
-    }
-  }
+    },
+  },
 };
 </script>
 

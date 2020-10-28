@@ -15,7 +15,7 @@ export default {
   name: "Scroll",
   data() {
     return {
-      bs: null
+      bs: null,
     };
   },
   mounted() {
@@ -23,9 +23,9 @@ export default {
       this.bs = new BScroll(this.$refs.wrapper, {
         probeType: 3,
         pullUpLoad: true,
-        click: true
+        click: true,
       });
-      this.bs.on("scroll", p => {
+      this.bs.on("scroll", (p) => {
         this.$emit("backtopBlock", p.y);
       });
       this.bs.on("pullingUp", () => {
@@ -34,14 +34,15 @@ export default {
       });
     }, 600);
   },
-  activated() {
-  },
+  activated() {},
   methods: {
     ScrollTo(x, y, time = 500) {
-      console.log("---");
       this.bs.scrollTo(x, y, time);
-    }
-  }
+    },
+    ScrollToElement(el, time) {
+      this.bs.scrollToElement(el, time);
+    },
+  },
 };
 </script>
 

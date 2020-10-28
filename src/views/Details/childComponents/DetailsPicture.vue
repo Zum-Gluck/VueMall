@@ -18,16 +18,11 @@ export default {
     },
   },
   data() {
-    return {
-      LoadCount: 0,
-    };
+    return {};
   },
   methods: {
     PicLoad() {
-      this.LoadCount++;
-      if (this.LoadCount === this.goodsPicture.length) {
-        this.$emit("PicLoad");
-      }
+      this.$bus.$emit("PicLoad");
     },
   },
 };
