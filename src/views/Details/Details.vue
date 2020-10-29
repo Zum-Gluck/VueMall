@@ -1,17 +1,35 @@
 <template>
   <div id="Details">
-    {{$store.state.cartList.length}}
-    <DetailsNavBar id="DetailsNavBar" @DetailsNavClick="DetailsNavClick" ref="detailNavBar"></DetailsNavBar>
+    <DetailsNavBar
+      id="DetailsNavBar"
+      @DetailsNavClick="DetailsNavClick"
+      ref="detailNavBar"
+    ></DetailsNavBar>
     <DetailsBottom @joinShopCar="joinShopCar"></DetailsBottom>
     <Scroll class="content" ref="Scroll" @backtopBlock="backtopBlock">
-      <DetailsSwiper :TopImages="TopImages" @SwiperLoad="SwiperLoad" class="detail-set-scroll"></DetailsSwiper>
+      <DetailsSwiper
+        :TopImages="TopImages"
+        @SwiperLoad="SwiperLoad"
+        class="detail-set-scroll"
+      ></DetailsSwiper>
       <DetailsGoodsInfo :goodsInfo="goodsInfo"></DetailsGoodsInfo>
       <DetailsShop :shopInfo="shopInfo"></DetailsShop>
       <DetailsPicture :goodsPicture="goodsPicture"></DetailsPicture>
-      <DetailsParams :goodsParams="goodsParams" :goodsTable="goodsTable" class="detail-set-scroll"></DetailsParams>
-      <DetailsComment :goodsComment="goodsComment" class="detail-set-scroll"></DetailsComment>
+      <DetailsParams
+        :goodsParams="goodsParams"
+        :goodsTable="goodsTable"
+        class="detail-set-scroll"
+      ></DetailsParams>
+      <DetailsComment
+        :goodsComment="goodsComment"
+        class="detail-set-scroll"
+      ></DetailsComment>
       <div class="goodsa detail-set-scroll">
-        <GoodsItem v-for="(item, index) in goodsRecommend" :key="index" :goodsItem="item"></GoodsItem>
+        <GoodsItem
+          v-for="(item, index) in goodsRecommend"
+          :key="index"
+          :goodsItem="item"
+        ></GoodsItem>
       </div>
     </Scroll>
     <BackTop @click.native="BackTop" v-show="scrollPosition < -500"></BackTop>
@@ -39,6 +57,7 @@ export default {
   name: "Details",
   data() {
     return {
+      iid: "",
       GoodsId: null,
       TopImages: [],
       goodsInfo: {
@@ -48,7 +67,7 @@ export default {
         columns: [],
         services: [],
         detailIndex: 0,
-        desc: ""
+        desc: "",
       },
       shopInfo: {},
       goodsPicture: [],
@@ -58,7 +77,7 @@ export default {
       goodsRecommend: [],
       scrollPosition: 0,
       classList: [],
-      newArr: []
+      newArr: [],
     };
   },
   components: {
@@ -72,13 +91,13 @@ export default {
     DetailsComment,
     GoodsItem,
     BackTop,
-    DetailsBottom
+    DetailsBottom,
   },
   created() {
     /*
      *  网络请求相关的代码
      */
-    GetDetasMultidata(this.$route.params.iid).then(res => {
+    GetDetasMultidata(this.$route.params.iid).then((res) => {
       console.log(res);
 
       /*
@@ -89,6 +108,8 @@ export default {
       /*
        *商品数据
        */
+      this.iid = res.iid;
+      console.log(this.iid);
       this.goodsInfo.title = res.result.itemInfo.title; //商品标题
       this.goodsInfo.price = res.result.itemInfo.price; //商品现在的价格
       this.goodsInfo.oldPrice = res.result.itemInfo.oldPrice; //商品下划线价格
@@ -118,7 +139,7 @@ export default {
       this.goodsComment = res.result.rate.list[0];
     });
 
-    GetRecommend().then(result => {
+    GetRecommend().then((result) => {
       this.goodsRecommend = result.data.list;
     });
   },
@@ -174,8 +195,8 @@ export default {
       product.iid = this.iid;
 
       // 将商品添加到VueX中
-      this.$store.commit("addCartList", product);
-    }
+      this.$store.dispatch("addCartLists", product);
+    },
   },
   mounted() {
     this.$bus.$on(
@@ -191,7 +212,7 @@ export default {
   destroyed() {
     // 离开页面时  取消事件监听  有bug未处理
     this.$bus.$off();
-  }
+  },
 };
 </script>
 

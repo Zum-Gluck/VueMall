@@ -8,22 +8,22 @@
         </a>
       </li>
       <li class="Bottom_item_left">
-        <a href="">
+        <a>
           <div class="jlt2"></div>
           <div>客服</div>
         </a>
       </li>
       <li class="Bottom_item_left">
-        <a href=""
-          ><div class="jlt3"></div>
+        <a>
+          <div class="jlt3"></div>
           <div>店铺</div>
         </a>
       </li>
-      <li class="Bottom_item_right" @click="joinShopCar"> 
-        <a href="#">加入购物车</a>
+      <li class="Bottom_item_right" @click="joinShopCar">
+        <a>加入购物车</a>
       </li>
       <li class="Bottom_item_right">
-        <a href="#">立即购买</a>
+        <a>立即购买</a>
       </li>
     </ul>
   </div>
@@ -32,11 +32,11 @@
 <script>
 export default {
   name: "DetailsBottom",
-  methods:{
-    joinShopCar(){
-      this.$emit("joinShopCar")
-    }
-  }
+  methods: {
+    joinShopCar() {
+      this.$emit("joinShopCar");
+    },
+  },
 };
 </script>
 
